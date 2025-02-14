@@ -25,5 +25,7 @@ npm run dev
 ```
 npx ngrok http 5173
 ```
+5. Go to vite.config.ts and add the ngrok url to the 
+```allowedHosts``` array
 5. Go to Missive and add a custom integration using the iframe URL from Ngrok
 6. Test the integration !
