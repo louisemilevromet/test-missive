@@ -9,6 +9,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ["keyword-extractor"],
+  },
   server: {
     allowedHosts: ["0a0f-157-208-20-196.ngrok-free.app"],
   },

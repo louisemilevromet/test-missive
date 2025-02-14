@@ -1,3 +1,5 @@
+import { Conversation } from "./Conversation";
+
 export interface Missive {
   state: {
     conversations?: { length: number }[];
@@ -34,6 +36,7 @@ export interface Missive {
     callback: (event: unknown) => void
   ) => void;
   closeSelf: () => void;
+  fetchConversations: (ids: string[]) => Promise<Conversation[]>;
 }
 
 declare global {

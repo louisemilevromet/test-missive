@@ -2,7 +2,11 @@ import SearchGifs from "@/components/SearchGifs";
 import Footer from "@/components/Footer";
 import { Gif } from "@/types/Gif";
 
+import { useState, useEffect } from "react";
+
 const App = () => {
+  const [conversation, setConversation] = useState({subject: ""});
+
   // Feature 1 & 4: Send a gif to the comment box, if there is no active conversation, create one
   const handleGifSelection = (gif: Gif) => {
     const activeConversation =
@@ -44,7 +48,9 @@ const App = () => {
       callback: async () => {
         try {
           const response = await fetch(
-            "https://tenor.googleapis.com/v2/search?q=thumbs+up&key=AIzaSyDEQh0Zq--gZUkLas23YU5FHmceuUG8zbw"
+            `https://tenor.googleapis.com/v2/search?q=thumbs+up&key=${
+              import.meta.env.VITE_TENOR_APIKEY
+            }`
           );
           const data = await response.json();
           const results = data.results;
@@ -63,12 +69,14 @@ const App = () => {
       },
     },
     {
-      // Respond with a random 👎 GIF
+      // Respond with a random GIF
       contexts: ["draft"],
-      label: "Respond with a random 👎 GIF",
+      label: "Respond with a random GIF",
       callback: async () => {
         const response = await fetch(
-          "https://tenor.googleapis.com/v2/search?q=thumbs+down&key=AIzaSyDEQh0Zq--gZUkLas23YU5FHmceuUG8zbw"
+          `https://tenor.googleapis.com/v2/search?q=thumbs+down&key=${
+            import.meta.env.VITE_TENOR_APIKEY
+          }`
         );
         const data = await response.json();
         const results = data.results;
@@ -113,7 +121,9 @@ const App = () => {
           // Search for the GIF
           try {
             const res = await fetch(
-              `https://tenor.googleapis.com/v2/search?q=${response.search}&key=AIzaSyDEQh0Zq--gZUkLas23YU5FHmceuUG8zbw`
+              `https://tenor.googleapis.com/v2/search?q=${
+                response.search
+              }&key=${import.meta.env.VITE_TENOR_APIKEY}`
             );
             const data = await res.json();
             const results = data.results;
@@ -134,10 +144,28 @@ const App = () => {
     },
   ]);
 
+    // Feature 5 (by Louis): Analyse the content of the conversation and propose GIFs
+    useEffect(() => {
+      const handler = (event: unknown) => {
+        const ids = event as string[];
+        Missive.fetchConversations(ids).then((conversations: any) => {
+          if (conversations.length !== 1) {
+            setConversation({subject: ""});
+            return;
+          }
+          setConversation(conversations[0].latest_message);
+        });
+      };
+  
+      Missive.on("change:conversations", handler);
+      return () => Missive.on("change:conversations", handler);
+    }, []);
+
   return (
     <div>
       <SearchGifs
         onGifSelected={(selectedGif) => handleGifSelection(selectedGif)}
+        conversation={conversation}
       />
       <Footer />
     </div>

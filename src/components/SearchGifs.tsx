@@ -1,17 +1,33 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { Search, Loader2 } from "lucide-react";
+import keyword_extractor from "keyword-extractor";
 
 import { Input } from "@/components/ui/input";
-import { Gif } from "@/types/Gif";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import type { Gif } from "@/types/Gif";
 
 const SearchGifs = ({
   onGifSelected,
+  conversation,
 }: {
   onGifSelected: (gif: Gif) => void;
+  conversation: {
+    subject: string;
+  };
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [gifs, setGifs] = useState<Gif[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
   const [hoveredGif, setHoveredGif] = useState<Gif | null>(null);
 
   useEffect(() => {
@@ -24,7 +40,9 @@ const SearchGifs = ({
         }
 
         const response = await fetch(
-          `https://tenor.googleapis.com/v2/search?q=${searchTerm}&key=AIzaSyDEQh0Zq--gZUkLas23YU5FHmceuUG8zbw`
+          `https://tenor.googleapis.com/v2/search?q=${searchTerm}&key=${
+            import.meta.env.VITE_TENOR_APIKEY
+          }`
         );
         const data = await response.json();
 
@@ -41,21 +59,65 @@ const SearchGifs = ({
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
+  const handleAnalyseContent = async () => {
+    try {
+      setIsLoading2(true);
+      if (!conversation || !conversation.subject) return;
+
+      // Extract keywords from the conversation subject.
+      const keywords = keyword_extractor.extract(conversation.subject, {
+        language: "english", // Change if needed (e.g., "french")
+        remove_digits: true,
+        return_changed_case: true,
+        remove_duplicates: true,
+      });
+
+      // Use the first 2-3 keywords to create a summary string
+      const summary = keywords.slice(0, 3).join(" ");
+      setSearchTerm(summary);
+    } catch (error) {
+      console.log("Error fetching conversation:", error);
+    } finally {
+      setIsLoading2(false);
+    }
+  };
+
   return (
     <div className="max-w-[1082px] mx-auto px-8 pt-8 pb-24">
       <h1 className="text-2xl font-bold mb-4">Gif Search</h1>
-      <div className="relative mb-6">
-        <Input
-          type="text"
-          placeholder="Search for gifs..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10"
-        />
-        <Search
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-          size={20}
-        />
+      <div className="flex gap-4 mb-6">
+        <div className="relative flex-grow">
+          <Input
+            type="text"
+            placeholder="Search for gifs..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={20}
+          />
+        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button onClick={handleAnalyseContent} disabled={!conversation}>
+                {isLoading2 ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Analyse"
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                This button analyzes the conversation you're on and proposes
+                GIFs based on the subject.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       <div className="grid sm:grid-cols-2 grid-cols-1 gap-4">
         {gifs.map((gif) => (
