@@ -69,9 +69,9 @@ const App = () => {
       },
     },
     {
-      // Respond with a random GIF
+      // Respond with a random 👎 GIF
       contexts: ["draft"],
-      label: "Respond with a random GIF",
+      label: "Respond with a random 👎 GIF",
       callback: async () => {
         const response = await fetch(
           `https://tenor.googleapis.com/v2/search?q=thumbs+down&key=${
