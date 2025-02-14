@@ -1,51 +1,20 @@
-# React + TypeScript + Vite
+# 🖼️ Tenor GIF Custom Integration 🖼️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+This project is a custom integration using the **Tenor API** to search for GIFs and insert them as comments in a conversation. The integration allows users to search for GIFs and insert them as comments seamlessly.
 
-Currently, two official plugins are available:
+## Features
+- **Search for GIFs**: Users can search for GIFs using the Tenor API.
+- **Insert GIFs as Comments**: Users can insert selected GIFs as comments in a conversation.
+- **Automatic Conversation Creation**: If no conversation is selected when inserting a GIF, the integration automatically creates a new conversation before inserting the GIF as a comment.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Integration with Missive
+In Missive, integrations are self-contained and embedded via **iframe**. Missive provides a **Missive JS API** script that enables integrations to communicate with Missive and can optionally add custom actions in the UI.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
-# test-missive
+## Getting Started
+1. Clone the repository
+2. Create a .env file or .env.local with your Tenor API VITE_TENOR_APIKEY=your_api_key_here
+3. Run the development server: `npm run dev`
+4. You can use Ngrok to create a tunnel to your development server: `ngrok http 5173`
+5. Go to Missive and add a custom integration using the iframe URL from Ngrok
+6. Test the integration by searching for GIFs and inserting them as comments in a conversation
