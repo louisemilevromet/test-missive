@@ -13,8 +13,17 @@ In Missive, integrations are self-contained and embedded via **iframe**. Missive
 
 ## Getting Started
 1. Clone the repository
-2. Create a .env file or .env.local with your Tenor API VITE_TENOR_APIKEY=your_api_key_here
-3. Run the development server: `npm run dev`
-4. You can use Ngrok to create a tunnel to your development server: `ngrok http 5173`
+2. Create a .env file or .env.local with your Tenor API
+```
+VITE_TENOR_APIKEY=YOUR_TENOR_API_KEY
+```
+3. Run the development server: 
+```
+npm run dev
+```
+4. You can use Ngrok to create a tunnel to your development server: 
+```
+npx ngrok http 5173
+```
 5. Go to Missive and add a custom integration using the iframe URL from Ngrok
-6. Test the integration by searching for GIFs and inserting them as comments in a conversation
+6. Test the integration !
